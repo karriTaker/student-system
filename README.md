@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 中文学习 | Học tiếng Trung
 
-## Getting Started
+为越南学生设计的中文线上练习平台。
 
-First, run the development server:
+## 功能特色
 
-```bash
+- 🤓 **AI 自动出题** - 老师指定语法点，AI 自动生成练习题
+- 📖 **多种题型** - 选择题、填空题、翻译题、判断题
+- 📊 **学习跟踪** - 学生答题记录、错题本、进步趋势
+- 👥 **账号管理** - 教师账号 / 学生账号分离
+
+## 技术栈
+
+| 层 | 技术 |
+|---|---|
+| 前端框架 | Next.js 16 (App Router) |
+| 样式 | Tailwind CSS 4 |
+| 数据库 | SQLite (通过 Prisma + libSQL) |
+| 认证 | JWT (jsonwebtoken) |
+| AI | OpenAI API (GPT-4o-mini) |
+
+## 开始使用
+
+### 本地开发
+
+```
+cd chinese-teaching
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# 打开 http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 部署到 Vercel
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. 推送代码到 GitHub
+2. 登录 [Vercel](https://vercel.com)
+3. 点击 "Add New" > "Project"
+4. 导入你的 GitHub 仓库
+5. 在 Environment Variables 中设置：
+   - `DATABASE_URL` - 数据库连接链接
+   - `JWT_SECRET` - 修改为一个安全的密钥
+   - `OPENAI_API_KEY` - (可选) OpenAI API Key
+6. 点击 "Deploy"
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+> 注意: Vercel 的无服务器环境不支持本地文件数据库。需要使用云数据库服务：
+> - [Turso](https://turso.tech) - 免费额度够用 (SQLite)
+> - [Supabase](https://supabase.com) - PostgreSQL，有免费额度
 
-## Learn More
+### 配置 AI 出题
 
-To learn more about Next.js, take a look at the following resources:
+1. 获取 OpenAI API Key (https://platform.openai.com)
+2. 在 .env 文件中设置: `OPENAI_API_KEY="sk-..."`
+3. 如果不设置，系统会自动使用模拟数据出题
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 项目结构
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+  app/
+    (auth)/       # 登录/注册页面
+    (dashboard)/  # 老师/学生控制面板
+    api/          # 后端 API 接口
+  lib/            # 工具库
+    prisma.ts     # Prisma 客户端
+    auth.ts       # JWT/BCrypt
+prisma/           # 数据库配置
+.env              # 环境变量
+```
