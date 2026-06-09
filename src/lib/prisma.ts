@@ -1,8 +1,6 @@
 import { PrismaClient } from "../generated/prisma/client"
 import { PrismaLibSql } from "@prisma/adapter-libsql"
 
-const dbUrl = process.env.DATABASE_URL || "file:./prisma/dev.db"
-
 let client: PrismaClient | null = null
 let initPromise: Promise<void> | null = null
 
@@ -10,7 +8,13 @@ async function getClient(): Promise<PrismaClient> {
   if (client) return client
   if (!initPromise) {
     initPromise = (async () => {
-      const factory = new PrismaLibSql({ url: dbUrl })
+      const dbUrl = process.env.DATABASE_URL || "file:./prisma/dev.db"
+      const authToken = process.env.TURSO_AUTH_TOKEN
+      const config: { url: string; authToken?: string } = { url: dbUrl }
+      if (authToken) {
+        config.authToken = authToken
+      }
+      const factory = new PrismaLibSql(config)
       client = new PrismaClient({ adapter: factory })
     })()
   }
@@ -18,7 +22,6 @@ async function getClient(): Promise<PrismaClient> {
   return client!
 }
 
-// Proxy to transparently handle async initialization
 function createPrismaProxy(): PrismaClient {
   const handler: ProxyHandler<PrismaClient> = {
     get(target, prop) {
